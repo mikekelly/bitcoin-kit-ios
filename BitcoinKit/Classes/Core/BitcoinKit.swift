@@ -20,7 +20,7 @@ public class BitcoinKit: AbstractKit {
         }
     }
 
-    public init(withWords words: [String], bip: Bip, walletId: String, syncMode: BitcoinCore.SyncMode = .api, networkType: NetworkType = .mainNet, confirmationsThreshold: Int = 6, logger: Logger?) throws {
+    public init(withWords words: [String], bip: Bip, walletId: String, syncMode: BitcoinCore.SyncMode = .api, networkType: NetworkType = .mainNet, confirmationsThreshold: Int = 6, hdWallet: IHDWallet?, logger: Logger?) throws {
         let network: INetwork
         let logger = logger ?? Logger(minLogLevel: .verbose)
 
@@ -67,7 +67,7 @@ public class BitcoinKit: AbstractKit {
         blockValidatorSet.add(blockValidator: blockValidatorChain)
 
         let hodler = HodlerPlugin(addressConverter: bitcoinCoreBuilder.addressConverter, blockMedianTimeHelper: BlockMedianTimeHelper(storage: storage), publicKeyStorage: storage)
-        
+
         let bitcoinCore = try bitcoinCoreBuilder
                 .set(network: network)
                 .set(initialSyncApi: initialSyncApi)
@@ -80,6 +80,7 @@ public class BitcoinKit: AbstractKit {
                 .set(syncMode: syncMode)
                 .set(storage: storage)
                 .set(blockValidator: blockValidatorSet)
+                .set(hdWallet: hdWallet)
                 .add(plugin: hodler)
                 .build()
 
